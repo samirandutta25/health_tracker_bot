@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: slack-bot
+    env: python
+    plan: free
+    pythonVersion: 3.10
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn bot:flask_app --bind 0.0.0.0:$PORT --workers 2
+    envVars:
+      - fromDotEnv: true
