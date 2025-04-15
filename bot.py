@@ -509,7 +509,7 @@ flask_app = Flask(__name__)
 handler = SlackRequestHandler(app)
 
 @flask_app.route("/ping", methods=["GET"])
-def slack_events():
+def ping_events():
     return "Pong", 200
 
 @flask_app.route("/slack/events", methods=["POST"])
