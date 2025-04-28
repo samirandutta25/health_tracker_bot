@@ -1401,7 +1401,7 @@ def handle_hypertrophy_submission(ack, body, client, view):
         f"✅ Thanks <@{user}>! Here's what you submitted:\n"
         f"• Gender: `{gender}`\n"
         f"• Target Muscle: `{target_muscle}`\n"
-        f"• Conpound Training Weight in kg: `{training_weight_kg}`"
+        f"• Compound Training Weight in kg: `{training_weight_kg}`"
     )
 
     message += "\n" + "—" * 15 + "\n" + generate_status_message()
