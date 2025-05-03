@@ -216,7 +216,7 @@ def handle_option_a_click(ack, body, client):
 
 
 
-def calculate_life_expectancy(Gender, Age, TobaccoUse, LDL):
+def estimate_life_expectancy(Gender, Age, TobaccoUse, LDL):
     if any(val is None for val in [Gender, Age, TobaccoUse, LDL]):
         return ""
     Gender = Gender.lower()
