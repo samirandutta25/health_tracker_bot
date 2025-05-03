@@ -2,6 +2,7 @@ from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 from flask import Flask, request
 from dotenv import load_dotenv
+import math
 from datetime import datetime, timedelta
 import pytz
 import json
@@ -216,51 +217,61 @@ def handle_option_a_click(ack, body, client):
 
 
 def estimate_life_expectancy(gender, age, tobacco_use, ldl):
-    if None in [gender, age, tobacco_use, ldl]:
-        return ""  # If any input is missing, return empty string
-    tobacco_use = tobacco_use.lower()
-    gender = gender.lower()
-    # Base life expectancy based on gender
-    base_le = 69 if gender == "male" else 72 if gender == "female" else 70
+    if gender is None or age is None or tobacco_use is None or ldl is None:
+        return ""
 
-    # LDL score
+    # Base Life Expectancy based on gender
+    if gender == "Male":
+        base_le = 70.6
+    elif gender == "Female":
+        base_le = 74.4
+    else:
+        base_le = 72.5
+
+    # LDL Score
     if ldl < 100:
         ldl_score = 0
-    elif ldl < 130:
+    elif ldl < 120:
         ldl_score = -1
-    elif ldl < 160:
+    elif ldl < 140:
         ldl_score = -2
-    else:
+    elif ldl < 160:
         ldl_score = -3
+    elif ldl < 190:
+        ldl_score = -4
+    else:
+        ldl_score = -5
 
-    # Tobacco score
-    tobacco_score = -5 if tobacco_use == "yes" else 0
+    # Tobacco Score
+    tobacco_score = -6.8 if tobacco_use == "Yes" else 0
 
-    # Age factor and penalty
-    age_factor = max(0, age - 40)
-    age_penalty = -1 * (age_factor ** 1.05 * 0.09)
+    # Age Penalty
+    age_offset = max(0, age - 35)
+    age_penalty = -1 * (age_offset ** 1.11 * 0.089)
 
-    # Risk multiplier
-    risk_multiplier = (1.1 if tobacco_use == "yes" else 1) + (0.05 if ldl > 160 else 0)
+    # Risk Amplifier
+    risk_amplifier = 1
+    if tobacco_use == "Yes":
+        risk_amplifier += 0.14
+    if ldl >= 160:
+        risk_amplifier += 0.075
+    elif ldl >= 130:
+        risk_amplifier += 0.037
 
-    # Adjusted life expectancy
-    adjusted_le = (base_le + ldl_score + tobacco_score + age_penalty) * (1 - (risk_multiplier - 1))
+    # Adjusted Life Expectancy
+    adjusted_le = (base_le + ldl_score + tobacco_score + age_penalty) / risk_amplifier
 
-    # Extract years and months from adjusted life expectancy
     years = int(adjusted_le)
-    months = round((adjusted_le - years) * 12, 0)
+    months = round((adjusted_le - years) * 12)
 
-    # Return the result message
-    result = (
+    return (
         f"Estimated Life Expectancy: {years} years and {months} months — "
-        f"Every healthy choice empowers your future. "
-        f"This isn't just a number—it's a nudge to live fully, love deeply, and thrive daily. "
-        f"Shine on, because your journey matters. "
-        f"— Source: Dr. V. Mohan, MD, FACP, FRCP | Padma Shri (2012) | Chairman, Diabetes Research Centre | "
-        f"Member, WHO Expert Panel | Lead, ICMR-INDIAB 2025"
+        "Every healthy choice empowers your future. "
+        "This isn't just a number—it's a nudge to live fully, love deeply, and thrive daily. "
+        "Shine on, because your journey matters. "
+        "— Based on ICMR-INDIAB & WHO cardiovascular actuarial models"
     )
 
-    return result
 
 @app.view("ldl_input")
 def handle_ldl_submission(ack, body, client, view):
