@@ -216,60 +216,48 @@ def handle_option_a_click(ack, body, client):
 
 
 
-def estimate_life_expectancy(gender, age, tobacco_use, ldl):
-    if gender is None or age is None or tobacco_use is None or ldl is None:
+def calculate_life_expectancy(Gender, Age, TobaccoUse, LDL):
+    if any(val is None for val in [Gender, Age, TobaccoUse, LDL]):
         return ""
+    Gender = Gender.lower()
+    TobaccoUse = TobaccoUse.lower()
+    BaseLE = 70.6 if Gender == "male" else 74.4 if Gender == "female" else 72.5
 
-    # Base Life Expectancy based on gender
-    if gender == "Male":
-        base_le = 70.6
-    elif gender == "Female":
-        base_le = 74.4
+    if LDL < 100:
+        LDL_Score = 0
+    elif LDL < 120:
+        LDL_Score = -1
+    elif LDL < 140:
+        LDL_Score = -2
+    elif LDL < 160:
+        LDL_Score = -3
+    elif LDL < 190:
+        LDL_Score = -4
     else:
-        base_le = 72.5
+        LDL_Score = -5
 
-    # LDL Score
-    if ldl < 100:
-        ldl_score = 0
-    elif ldl < 120:
-        ldl_score = -1
-    elif ldl < 140:
-        ldl_score = -2
-    elif ldl < 160:
-        ldl_score = -3
-    elif ldl < 190:
-        ldl_score = -4
-    else:
-        ldl_score = -5
+    Tobacco_Score = -6.8 if TobaccoUse == "yes" else 0
 
-    # Tobacco Score
-    tobacco_score = -6.8 if tobacco_use == "Yes" else 0
+    AgeOffset = max(0, Age - 35)
+    AgePenalty = -1 * (AgeOffset ** 1.11 * 0.089)
 
-    # Age Penalty
-    age_offset = max(0, age - 35)
-    age_penalty = -1 * (age_offset ** 1.11 * 0.089)
+    RiskAmplifier = (
+        1 +
+        (0.14 if TobaccoUse == "yes" else 0) +
+        (0.075 if LDL >= 160 else (0.037 if LDL >= 130 else 0))
+    )
 
-    # Risk Amplifier
-    risk_amplifier = 1
-    if tobacco_use == "Yes":
-        risk_amplifier += 0.14
-    if ldl >= 160:
-        risk_amplifier += 0.075
-    elif ldl >= 130:
-        risk_amplifier += 0.037
+    AdjustedLE = (BaseLE + LDL_Score + Tobacco_Score + AgePenalty) / RiskAmplifier
 
-    # Adjusted Life Expectancy
-    adjusted_le = (base_le + ldl_score + tobacco_score + age_penalty) / risk_amplifier
-
-    years = int(adjusted_le)
-    months = round((adjusted_le - years) * 12)
+    Years = int(AdjustedLE)
+    Months = round((AdjustedLE - Years) * 12)
 
     return (
-        f"Estimated Life Expectancy: {years} years and {months} months — "
-        "Every healthy choice empowers your future. "
-        "This isn't just a number—it's a nudge to live fully, love deeply, and thrive daily. "
-        "Shine on, because your journey matters. "
-        "— Based on ICMR-INDIAB & WHO cardiovascular actuarial models"
+        f"Estimated Life Expectancy: {Years} years and {Months} months — "
+        f"Every healthy choice empowers your future. "
+        f"This isn't just a number—it's a nudge to live fully, love deeply, and thrive daily. "
+        f"Shine on, because your journey matters. "
+        f"— Based on ICMR-INDIAB & WHO cardiovascular actuarial models"
     )
 
 
