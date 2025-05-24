@@ -1488,6 +1488,58 @@ def handle_option_d_click(ack, body, client):
         }
     )
 
+def optimal_performance_snapshot(pct_str):
+    try:
+        # Remove % sign and convert to integer
+        pct_int = int(pct_str.strip().replace('%', ''))
+    except ValueError:
+        return "**INPUT ERROR:** Please enter a valid percentage like '10%', '20%', ..., '100%'."
+
+    # Validate that it's one of the allowed steps
+    if pct_int not in range(10, 101, 10):
+        return "**INPUT ERROR:** Please enter a percentage from 10% to 100% in steps of 10%."
+
+    # Define header
+    header = "\n".join([
+        "",
+        "╔══════════════════════════════╗",
+        "  OPTIMAL PERFORMANCE SNAPSHOT  ",
+        "╚══════════════════════════════╝"
+    ])
+
+    # Define warmup block
+    warmup_block = "\n".join([
+        "",
+        "» **Prime Mover Prep**: Dumbbell Lateral Raises",
+        "",
+        "» **Muscle Engagement Matrix**:",
+        "   • Pectoralis Major + Latissimus Dorsi + Rectus Abdominis",
+        "   • Quadriceps Femoris + Gluteus Maximus + Obliques",
+        "   • Deltoideus + Trapezius + Soleus",
+        "   • Hamstrings",
+        "   • Biceps Brachii + Triceps Brachii",
+        "",
+        "═════════════════════════════════════",
+        "Need expert tweaks? Chat now:",
+        "https://wa.me/917289884589"
+    ])
+
+    # Define performance notes
+    performance_notes = {
+        10: "**10%** - Initiating tempo. Precision starts here — every rep builds intent.",
+        20: "**20%** - Momentum rising. Focus sharp, form tight — laying the foundation.",
+        30: "**30%** - Discipline on display. Reps are purposeful, control is everything.",
+        40: "**40%** - Mechanics locked in. Strong posture, clean transitions — pro-level execution.",
+        50: "**50%** - Midpoint mastery. Fully engaged, zero wasted motion.",
+        60: "**60%** - Controlled intensity. Technique refined, tempo mastered.",
+        70: "**70%** - Fatigue testing resolve. This is where adaptation begins.",
+        80: "**80%** - Precision under pressure. Volume meets attention to detail.",
+        90: "**90%** - Elite territory. Strength and grit converge — nearly there.",
+        100: "**100%** - Maximum output. You've transcended routine — this is transformation."
+    }
+
+    return "\n".join([header, "", performance_notes[pct_int], warmup_block])
+
 @app.view("completion_form")
 def handle_completion_submission(ack, body, client, view):
     ack()
@@ -1509,7 +1561,7 @@ def handle_completion_submission(ack, body, client, view):
         "100%": "Another mission crushed! Strength, skill, resilience — you’ve built it, earned it, and it’s only the beginning.",
     }
 
-    message =  motivations[percent_complete]
+    message =  optimal_performance_snapshot(percent_complete)
 
     client.chat_postMessage(
         channel=channel_id,
