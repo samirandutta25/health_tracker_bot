@@ -85,7 +85,7 @@ def reply_to_dm(message, say):
                     },
                     {
                         "type": "button",
-                        "text": {"type": "plain_text", "text": "Exercise Completed?"},
+                        "text": {"type": "plain_text", "text": "Whatsapp"},
                         "value": "completion",
                         "action_id": "completion"
                     }
