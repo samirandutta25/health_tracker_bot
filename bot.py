@@ -520,13 +520,13 @@ def handle_health_submission(ack, body, client, view):
         f"• Weight in kg: `{weight_kg}`"
     )
     message += "\n"
-    bmi = calculate_bmi_status(int(height_cm), int(weight_kg))
+    bmi = calculate_bmi_status(int(height_cm), float(weight_kg))
     message += bmi
     message += "\n"
-    ideal_body_weight = ideal_body_weight_feedback(gender.lower(), int(height_cm), int(weight_kg))
+    ideal_body_weight = ideal_body_weight_feedback(gender.lower(), int(height_cm), float(weight_kg))
     message += ideal_body_weight
     message += "\n"
-    bmr_status = calculate_bmr_status(gender, int(height_cm), int(age) ,int(weight_kg))
+    bmr_status = calculate_bmr_status(gender, int(height_cm), int(age) ,float(weight_kg))
     message += bmr_status
 
     client.chat_postMessage(
