@@ -282,7 +282,7 @@ def handle_ldl_submission(ack, body, client, view):
         f"• LDL cholesterol: `{ldl}`"
     )
 
-    life_expectancy = estimate_life_expectancy(gender, int(age), smoke, int(ldl))
+    life_expectancy = estimate_life_expectancy(gender, int(age), smoke, float(ldl))
     
 
     client.chat_postMessage(
@@ -310,7 +310,7 @@ def handle_health_submission(ack, body, client, view):
         f"• LDL Cholesterol: `{ldl}`"
     )
 
-    life_expectancy = estimate_life_expectancy(gender, int(age), smoke, int(ldl))
+    life_expectancy = estimate_life_expectancy(gender, int(age), smoke, float(ldl))
     message += "\n"
     message += life_expectancy
     client.chat_postMessage(
